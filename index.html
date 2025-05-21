@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Project Tracker</title>
+  <title>Project Tracker - Spreadsheet Edition</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
 :root {
@@ -13,14 +13,15 @@
   --card: #fff;
   --shadow: 0 4px 16px rgba(40,70,120,0.09);
   --border: #e3e6ee;
-  --radius: 14px;
+  --radius: 10px;
+  --accent: #49cbb7;
 }
 [data-theme="dark"] {
-  --bg: #1a1d23;
+  --bg: #202330;
   --text: #e7eaf1;
   --card: #23272f;
   --border: #343842;
-  --shadow: 0 4px 24px rgba(30,40,60,0.24);
+  --shadow: 0 4px 24px rgba(30,40,60,0.21);
 }
 body {
   margin: 0;
@@ -32,18 +33,18 @@ body {
 header {
   background: var(--primary);
   color: #fff;
-  padding: 20px 0;
+  padding: 18px 0;
   box-shadow: var(--shadow);
 }
 .header-inner {
-  max-width: 900px;
+  max-width: 1100px;
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .header-inner h1 {
-  font-size: 1.8em;
+  font-size: 1.6em;
   margin: 0;
   letter-spacing: 1px;
   font-weight: 700;
@@ -60,7 +61,7 @@ header {
   color: #fff;
   border: none;
   border-radius: var(--radius);
-  padding: 10px 18px;
+  padding: 9px 16px;
   cursor: pointer;
   font-size: 1em;
   font-weight: 500;
@@ -74,7 +75,7 @@ header {
 .btn.secondary { background: #fff; color: var(--primary); border: 1px solid var(--border);}
 .btn.secondary:hover { background: #f0f2fa; }
 .container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 36px auto;
   padding: 0 16px;
 }
@@ -86,124 +87,181 @@ header {
 }
 .dashboard-card {
   flex: 1 1 160px;
-  min-width: 180px;
+  min-width: 170px;
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 24px;
+  padding: 22px;
   border: 1px solid var(--border);
   text-align: center;
 }
 .dashboard-card h3 {
   margin-top: 0;
   margin-bottom: 8px;
-  font-size: 1.05em;
+  font-size: 1.03em;
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--primary);
 }
 .dashboard-card .num {
-  font-size: 2.4em;
+  font-size: 2.2em;
   font-weight: 700;
   letter-spacing: 1px;
   margin: 0;
 }
-#projects {
-  margin-top: 8px;
-  display: grid;
-  gap: 22px;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-.project-card {
+.table-scroll {
+  overflow-x: auto;
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 22px 18px 14px 18px;
   border: 1px solid var(--border);
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  padding: 0 0 8px 0;
 }
-.project-card h4 {
-  margin: 0 0 3px 0;
+#projectTable {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+#projectTable th, #projectTable td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+  background: var(--card);
+  font-size: 1em;
+}
+#projectTable th {
+  background: #f1f4fa;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   font-weight: 600;
+  color: var(--primary);
 }
-.project-actions {
-  position: absolute;
-  right: 10px;
-  top: 12px;
+[data-theme="dark"] #projectTable th {
+  background: #23272f;
+}
+#projectTable td.editable:hover {
+  background: #eaf1fd;
+  cursor: pointer;
+}
+[data-theme="dark"] #projectTable td.editable:hover {
+  background: #2a3557;
+}
+#projectTable td input, #projectTable td textarea, #projectTable td select {
+  width: 100%;
+  font-size: 1em;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 7px;
+}
+#projectTable .action-btns button {
+  margin-right: 3px;
+}
+.add-field-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 3px 12px;
+  cursor: pointer;
+  font-size: 0.93em;
+  font-weight: 600;
+  transition: background .16s;
+}
+.add-field-btn:hover { background: #1fa390; }
+.add-row-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 13px;
+  font-size: 1em;
+  font-weight: 600;
+  margin: 12px 0;
+  cursor: pointer;
+}
+#projectTable tr.selected { background: #e5fff1 !important; }
+[data-theme="dark"] #projectTable tr.selected { background: #223535 !important; }
+.task-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  margin: 9px 0 12px 0;
+  background: var(--card);
+}
+.task-table th, .task-table td {
+  border: 1px solid var(--border);
+  padding: 7px 9px;
+  text-align: left;
+  font-size: 0.98em;
+}
+.task-table th {
+  background: #f6fbff;
+  font-weight: 500;
+  color: var(--primary);
+}
+[data-theme="dark"] .task-table th {
+  background: #23272f;
+}
+.task-table td.editable:hover {
+  background: #eaf1fd;
+  cursor: pointer;
+}
+[data-theme="dark"] .task-table td.editable:hover {
+  background: #2a3557;
+}
+.bulk-bar {
+  background: #f7fbe7;
+  color: #276b24;
+  border-radius: 8px;
+  padding: 5px 10px;
+  margin-bottom: 7px;
   display: flex;
-  gap: 5px;
+  align-items: center;
+  gap: 18px;
+}
+[data-theme="dark"] .bulk-bar {
+  background: #21301a;
+  color: #d7ffd0;
 }
 .progress-bar-bg {
-  width: 100%;
-  height: 7px;
-  border-radius: 7px;
+  width: 110px;
+  height: 8px;
+  border-radius: 5px;
   background: #e3e6ee;
-  margin: 10px 0 5px 0;
   overflow: hidden;
+  display: inline-block;
+  margin: 0 8px;
+  vertical-align: middle;
 }
 .progress-bar {
   height: 100%;
   background: linear-gradient(90deg,#6c8dfb,#63e7d3 70%);
   transition: width .3s;
 }
-.task-list {
-  margin: 12px 0 0 0;
-  padding: 0;
-  list-style: none;
-  max-height: 140px;
-  overflow-y: auto;
+.comment-btn {
+  background: none;
+  border: none;
+  color: #686868;
+  font-size: 1.15em;
+  cursor: pointer;
+  margin-left: 2px;
+  vertical-align: middle;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background .16s;
 }
-.task-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
+.comment-btn:hover {
+  background: #e5ecfd;
+  color: var(--primary);
 }
-.task-item:last-child { border-bottom: none; }
-.task-title { flex: 1; }
-.task.done .task-title {
-  text-decoration: line-through;
-  color: #888;
-  opacity: 0.8;
+[data-theme="dark"] .comment-btn:hover {
+  background: #253350;
+  color: #a6f7ee;
 }
-.task-priority {
-  font-size: 0.85em;
-  border-radius: 8px;
-  padding: 2px 7px;
-  font-weight: 500;
-  margin-right: 6px;
-  background: #eee;
-}
-.priority-low { color: #1aab00; background: #ecfbe8;}
-.priority-medium { color: #a87e02; background: #fdf7e2;}
-.priority-high { color: #d61e0c; background: #fbe8e8;}
-.add-task-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-.add-task-row input, .add-task-row select, .add-task-row input[type="date"] {
-  padding: 7px 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  font-size: 1em;
-  background: var(--card);
-  color: var(--text);
-}
-.add-task-row input[type="date"] { min-width:120px; }
-.add-task-row .btn { padding: 7px 14px; }
-.search {
-  border-radius: 9px;
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  font-size: 1em;
-  background: var(--card);
-  color: var(--text);
-}
-#projectModal, #taskEditModal {
+.comment-modal-bg {
   display: none;
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -212,42 +270,48 @@ header {
   align-items: center;
   z-index: 99;
 }
-#projectModal .modal-content, #taskEditModal .modal-content {
+.comment-modal {
   background: var(--card);
-  padding: 28px 30px 22px;
-  border-radius: var(--radius);
-  min-width: 320px;
-  max-width: 98vw;
-  position: relative;
+  padding: 22px 22px 18px;
+  border-radius: 10px;
   box-shadow: var(--shadow);
+  min-width: 300px;
+  max-width: 90vw;
   border: 1px solid var(--border);
-  animation: fadeIn .25s;
+  position: relative;
 }
-#projectModal .close-btn, #taskEditModal .close-btn {
-  position: absolute;
-  top: 10px; right: 16px;
-  background: none;
-  border: none;
-  font-size: 1.3em;
-  color: #888;
-  cursor: pointer;
-  transition: color .15s;
-}
-#projectModal .close-btn:hover, #taskEditModal .close-btn:hover { color: #c30; }
-#projectModal input, #projectModal textarea, #taskEditModal input, #taskEditModal select {
+.comment-modal textarea {
   width: 100%;
+  min-height: 70px;
   padding: 9px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border-radius: 8px;
   font-size: 1em;
-  margin-bottom: 18px;
+  border: 1px solid var(--border);
   background: var(--card);
   color: var(--text);
+  margin-bottom: 11px;
+  resize: vertical;
 }
-@keyframes fadeIn { from {opacity:0;transform:scale(0.97);} to {opacity:1;transform:scale(1);} }
+.comment-modal .close-btn {
+  position: absolute;
+  right: 11px;
+  top: 9px;
+  background: none;
+  border: none;
+  font-size: 1.17em;
+  color: #888;
+  cursor: pointer;
+  padding: 2px 5px;
+}
+.comment-modal .close-btn:hover { color: #c30; }
+@media (max-width: 900px) {
+  .container, .header-inner { max-width: 98vw;}
+  #projectTable, .task-table { min-width: 650px;}
+}
 @media (max-width: 700px) {
   .dashboard { flex-direction: column; }
-  .container { padding: 0 5px; }
+  .container { padding: 0 3px; }
+  #projectTable, .task-table { font-size: 0.9em;}
 }
   </style>
 </head>
@@ -259,7 +323,6 @@ header {
       <button id="themeBtn" class="btn secondary" title="Toggle dark mode"><span class="material-icons">brightness_4</span></button>
       <button id="loginBtn" class="btn secondary">Login</button>
       <button id="logoutBtn" class="btn secondary" style="display:none">Logout</button>
-      <button id="newProjectBtn" class="btn"><span class="material-icons">add</span> New Project</button>
       <button id="exportBtn" class="btn secondary"><span class="material-icons">download</span> Export</button>
       <button id="importBtn" class="btn secondary"><span class="material-icons">upload</span> Import</button>
       <input type="file" id="fileInput" style="display:none;">
@@ -285,68 +348,62 @@ header {
       <div class="num" id="progressPercent">0%</div>
     </div>
   </div>
-  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
-    <input id="searchInput" class="search" type="text" placeholder="Search projects..." style="flex:1;min-width:200px;">
-    <select id="sortProjects" class="search" style="min-width:150px;">
-      <option value="default">Sort: Default</option>
-      <option value="alpha">Sort: A-Z</option>
-      <option value="tasks">Sort: By #Tasks</option>
-    </select>
+  <div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;">
+    <input id="searchInput" class="search" type="text" placeholder="Search projects..." style="flex:1;min-width:210px;">
+    <button class="add-row-btn" id="addProjectBtn"><span class="material-icons">add</span> Add Project</button>
   </div>
-  <div id="projects"></div>
-</div>
-<!-- Project Modal -->
-<div id="projectModal">
-  <div class="modal-content">
-    <button class="close-btn" id="closeProjectModal" title="Cancel"><span class="material-icons">close</span></button>
-    <h3 id="modalTitle" style="margin-top:0;">New Project</h3>
-    <input type="text" id="projectName" placeholder="Project name">
-    <textarea id="projectDescription" placeholder="Project description"></textarea>
-    <button id="saveProjectBtn" class="btn" style="width:100%;">Save Project</button>
+  <div class="table-scroll">
+    <table id="projectTable"></table>
   </div>
 </div>
-<!-- Task Edit Modal -->
-<div id="taskEditModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:200;background:rgba(0,0,0,0.13);align-items:center;justify-content:center;">
-  <div class="modal-content" style="min-width:320px;">
-    <button class="close-btn" id="closeTaskEditModal" title="Cancel"><span class="material-icons">close</span></button>
-    <h3>Edit Task</h3>
-    <input type="text" id="editTaskName" placeholder="Task name">
-    <input type="date" id="editTaskDueDate">
-    <select id="editTaskPriority">
-      <option value="low">Low priority</option>
-      <option value="medium">Medium priority</option>
-      <option value="high">High priority</option>
-    </select>
-    <button id="saveTaskEditBtn" class="btn" style="width:100%;">Save Task</button>
+
+<!-- Comment Modal -->
+<div class="comment-modal-bg" id="commentModalBG">
+  <div class="comment-modal">
+    <button class="close-btn" id="closeCommentModal"><span class="material-icons">close</span></button>
+    <h3 style="margin-top:0;" id="commentModalTitle">Comments</h3>
+    <textarea id="commentModalTextarea"></textarea>
+    <button class="btn" id="saveCommentBtn" style="width:100%;margin-top:10px;">Save</button>
   </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
+/*
+  Project Tracker Spreadsheet Edition
+  - Inline editing for all project fields (default & custom)
+  - Bulk task actions, task and project comments
+  - Analytics, dark mode, import/export, multi-user
+  - Easy deployment: single HTML file!
+*/
+
+// --- State ---
+const DEFAULT_FIELDS = ["name", "description", "LP", "CW", "WS", "CM", "Comments"];
+const FIELD_LABELS = {
+  name: "Name", description: "Description",
+  LP: "LP", CW: "CW", WS: "WS", CM: "CM", Comments: "Comments"
+};
 let currentUser = localStorage.getItem("user") || null;
-let editingProjectIndex = null;
-let editingTask = { pidx: null, tidx: null };
+let customFields = JSON.parse(localStorage.getItem("customFields")||"[]"); // shared per user
+let commentModalState = { type: null, pidx: null, tidx: null };
 
-function userKey(key) {
-  return currentUser ? currentUser + "_" + key : key;
+function userKey(key) { return currentUser ? currentUser + "_" + key : key; }
+
+function getProjects() {
+  return JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
+}
+function saveProjects(arr) {
+  localStorage.setItem(userKey("projects"), JSON.stringify(arr));
 }
 
-function percent(x, y) {
-  return y === 0 ? 0 : Math.round((x / y) * 100);
+function getAllFields() {
+  // Merge default with any custom
+  let userFields = customFields || [];
+  return DEFAULT_FIELDS.concat(userFields.filter(f=>!DEFAULT_FIELDS.includes(f)));
 }
 
-// ---- UI State ----
-function setAuthUI(loggedIn) {
-  document.getElementById("loginBtn").style.display = loggedIn ? "none" : "";
-  document.getElementById("logoutBtn").style.display = loggedIn ? "" : "none";
-  document.getElementById("newProjectBtn").disabled = !loggedIn;
-  document.getElementById("exportBtn").disabled = !loggedIn;
-  document.getElementById("importBtn").disabled = !loggedIn;
-  document.getElementById("searchInput").disabled = !loggedIn;
-  document.getElementById("sortProjects").disabled = !loggedIn;
-}
-
-// ---- Dashboard/Analytics ----
+// --- Analytics/Dashboard ---
 function renderDashboard(projects) {
   let tasks = 0, done = 0;
   projects.forEach(p => {
@@ -358,226 +415,367 @@ function renderDashboard(projects) {
   document.getElementById("projectCount").textContent = projects.length;
   document.getElementById("taskCount").textContent = tasks;
   document.getElementById("taskDoneCount").textContent = done;
-  document.getElementById("progressPercent").textContent = percent(done, tasks) + "%";
+  document.getElementById("progressPercent").textContent = (tasks ? Math.round((done/tasks)*100) : 0) + "%";
 }
 
-function filterAndSort(projects) {
-  let term = document.getElementById("searchInput").value.trim().toLowerCase();
-  let mode = document.getElementById("sortProjects").value;
-  let filtered = projects.filter(p => p.name.toLowerCase().includes(term));
-  if (mode === "alpha") {
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (mode === "tasks") {
-    filtered.sort((a, b) => (b.tasks?.length||0) - (a.tasks?.length||0));
-  }
-  return filtered;
-}
-
-// ---- Project Render ----
-function renderProjects() {
-  if (!currentUser) { setAuthUI(false); return; }
-  setAuthUI(true);
-  const container = document.getElementById("projects");
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
+// --- Inline Table Rendering ---
+function renderProjectTable() {
+  if (!currentUser) { renderTableNoAuth(); return; }
+  let projects = getProjects();
   renderDashboard(projects);
-  let toShow = filterAndSort(projects);
-  container.innerHTML = "";
-  if (!toShow.length) {
-    container.innerHTML = "<div style='text-align:center;opacity:0.7;padding:40px;'>No projects to display.</div>";
-    return;
-  }
-  toShow.forEach((p, i) => {
-    const idx = projects.findIndex(pr => pr.name === p.name && pr.description === p.description);
-    let card = document.createElement("div");
-    card.className = "project-card";
-    // Project actions
-    card.innerHTML = `
-      <div class="project-actions">
-        <button class="btn secondary" style="padding:4px 7px;" title="Edit" onclick="editProject(${idx})"><span class="material-icons" style="font-size:1.2em;">edit</span></button>
-        <button class="btn secondary" style="padding:4px 7px;" title="Delete" onclick="deleteProject(${idx})"><span class="material-icons" style="font-size:1.2em;">delete</span></button>
-      </div>
-      <h4>${p.name}</h4>
-      <p style="min-height:24px">${p.description||""}</p>
-      <div class="progress-bar-bg">
-        <div class="progress-bar" style="width:${percent((p.tasks||[]).filter(t=>t.done).length, (p.tasks||[]).length)}%"></div>
-      </div>
-      <div style="font-size:0.95em;margin-bottom:3px;opacity:0.8;">
-        ${p.tasks?.filter(t=>t.done).length||0} of ${(p.tasks||[]).length||0} tasks complete
-      </div>
-      <ul class="task-list" id="task-list-${idx}"></ul>
-      <div class="add-task-row">
-        <input id="taskInput-${idx}" type="text" placeholder="Task name">
-        <select id="taskPrio-${idx}" style="min-width:85px;">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <input type="date" id="taskDue-${idx}" style="min-width:120px;">
-        <button class="btn" id="addTaskBtn-${idx}" title="Add Task"><span class="material-icons" style="font-size:1.2em;">add_task</span></button>
-      </div>
-    `;
-    container.appendChild(card);
-    // Render tasks
-    let list = card.querySelector(".task-list");
-    (p.tasks||[]).forEach((t, tidx) => {
-      let li = document.createElement("li");
-      li.className = "task-item" + (t.done ? " task done" : "");
-      let due = t.due ? `<span style="font-size:0.9em;color:#888;">${t.due}</span>` : "";
-      li.innerHTML = `
-        <input type="checkbox" ${t.done ? "checked" : ""} onclick="toggleTask(${idx},${tidx})">
-        <span class="task-title">${t.title}</span>
-        <span class="task-priority priority-${t.priority||'low'}">${(t.priority||'low').charAt(0).toUpperCase()+ (t.priority||'low').slice(1)}</span>
-        ${due}
-        <button class="btn secondary" style="padding:2px 7px;margin-left:5px;" title="Edit Task" onclick="editTask(${idx},${tidx})"><span class="material-icons" style="font-size:1.1em;">edit</span></button>
-        <button class="btn secondary" style="padding:2px 7px;" title="Delete Task" onclick="deleteTask(${idx},${tidx})"><span class="material-icons" style="font-size:1.1em;">delete</span></button>
-      `;
-      list.appendChild(li);
-    });
-    // Add task logic
-    setTimeout(() => {
-      document.getElementById(`addTaskBtn-${idx}`).onclick = function() {
-        let val = document.getElementById(`taskInput-${idx}`).value.trim();
-        let prio = document.getElementById(`taskPrio-${idx}`).value;
-        let due = document.getElementById(`taskDue-${idx}`).value;
-        if (!val) return;
-        projects[idx].tasks = projects[idx].tasks||[];
-        projects[idx].tasks.push({ title: val, done: false, priority: prio, due: due });
-        localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-        document.getElementById(`taskInput-${idx}`).value = "";
-        document.getElementById(`taskDue-${idx}`).value = "";
-        renderProjects();
-      };
-    }, 0);
+  let term = document.getElementById("searchInput").value.trim().toLowerCase();
+  let fields = getAllFields();
+
+  let rows = projects.filter(p => (p.name||"").toLowerCase().includes(term));
+  let table = document.getElementById("projectTable");
+  table.innerHTML = "";
+  // Header
+  let ths = fields.map(f=>`<th>${FIELD_LABELS[f]||f}</th>`).join("");
+  ths += `<th><button class="add-field-btn" title="Add column" onclick="addFieldPrompt()"><span class="material-icons" style="font-size:1em;vertical-align:middle;">view_column</span> Add Field</button></th>`;
+  table.innerHTML += `<tr>${ths}</tr>`;
+  // Rows
+  rows.forEach((p, i) => {
+    let tds = fields.map(f=>{
+      if (f === "Comments") {
+        return `<td>
+          <button class="comment-btn" title="Edit Comments" onclick="openCommentModal('project',${i},null)">
+            <span class="material-icons">comment</span>
+          </button>
+        </td>`;
+      }
+      let val = typeof p[f] !== "undefined" ? p[f] : "";
+      return `<td class="editable" onclick="editCell(${i},'${f}',this)">${escapeHTML(val)}</td>`;
+    }).join("");
+    tds += `<td class="action-btns">
+      <button class="btn secondary" title="Tasks" onclick="toggleTasksRow(${i}, this)"><span class="material-icons">list</span></button>
+      <button class="btn secondary" title="Delete Project" onclick="deleteProject(${i})"><span class="material-icons">delete</span></button>
+    </td>`;
+    let tr = `<tr id="proj-row-${i}">${tds}</tr>
+      <tr id="task-row-${i}" style="display:none;"><td colspan="${fields.length+1}" id="task-cell-${i}"></td></tr>`;
+    table.innerHTML += tr;
   });
 }
 
-// ---- Project/Task Operations ----
-window.toggleTask = function(pidx, tidx) {
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  projects[pidx].tasks[tidx].done = !projects[pidx].tasks[tidx].done;
-  localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-  renderProjects();
+function renderTableNoAuth() {
+  document.getElementById("projectTable").innerHTML = `<tr><th>Login to view projects</th></tr>`;
+  document.getElementById("projectCount").textContent = "0";
+  document.getElementById("taskCount").textContent = "0";
+  document.getElementById("taskDoneCount").textContent = "0";
+  document.getElementById("progressPercent").textContent = "0%";
+}
+
+// --- Inline Editing ---
+window.editCell = function(pidx, field, td) {
+  if (field === "Comments") return; // handled by modal
+  let projects = getProjects();
+  let value = typeof projects[pidx][field] !== "undefined" ? projects[pidx][field] : "";
+  let input;
+  if (field === "description") {
+    input = document.createElement("textarea");
+    input.value = value;
+    input.rows = 2;
+    input.style.minWidth = "120px";
+  } else {
+    input = document.createElement("input");
+    input.type = "text";
+    input.value = value;
+  }
+  input.onblur = function() {
+    projects[pidx][field] = input.value;
+    saveProjects(projects);
+    renderProjectTable();
+  };
+  input.onkeydown = function(e) {
+    if (e.key === "Enter" && field !== "description") {
+      input.blur();
+    }
+  };
+  td.innerHTML = "";
+  td.appendChild(input);
+  input.focus();
 };
 
+window.addFieldPrompt = function() {
+  let f = prompt("New column name (letters, numbers, spaces):");
+  if (!f) return;
+  f = f.replace(/[^a-zA-Z0-9 _-]/g,"").trim();
+  if (!f) return;
+  if (getAllFields().map(x=>x.toLowerCase()).includes(f.toLowerCase())) {
+    alert("That column already exists."); return;
+  }
+  customFields.push(f);
+  localStorage.setItem("customFields", JSON.stringify(customFields));
+  // Add to existing projects
+  let projects = getProjects();
+  projects.forEach(p=>{ if(typeof p[f]==="undefined")p[f]=""; });
+  saveProjects(projects);
+  renderProjectTable();
+};
+
+// --- Add Project ---
+document.getElementById("addProjectBtn").onclick = function() {
+  let projects = getProjects();
+  let obj = {};
+  getAllFields().forEach(f=>obj[f]="");
+  obj.tasks = [];
+  saveProjects([obj].concat(projects));
+  renderProjectTable();
+};
+
+// --- Delete Project ---
 window.deleteProject = function(idx) {
   if (!confirm("Delete this project?")) return;
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
+  let projects = getProjects();
   projects.splice(idx,1);
-  localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-  renderProjects();
+  saveProjects(projects);
+  renderProjectTable();
 };
 
-window.editProject = function(idx) {
-  editingProjectIndex = idx;
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  let proj = projects[idx];
-  document.getElementById("modalTitle").textContent = "Edit Project";
-  document.getElementById("projectName").value = proj.name;
-  document.getElementById("projectDescription").value = proj.description;
-  document.getElementById("projectModal").style.display = "flex";
-};
-
-window.deleteTask = function(pidx, tidx) {
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  projects[pidx].tasks.splice(tidx,1);
-  localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-  renderProjects();
-};
-
-window.editTask = function(pidx, tidx) {
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  let task = projects[pidx].tasks[tidx];
-  editingTask = { pidx, tidx };
-  document.getElementById("editTaskName").value = task.title;
-  document.getElementById("editTaskPriority").value = task.priority||'low';
-  document.getElementById("editTaskDueDate").value = task.due||"";
-  document.getElementById("taskEditModal").style.display = "flex";
-};
-
-// ---- Modal Logic ----
-document.getElementById("newProjectBtn").onclick = function() {
-  editingProjectIndex = null;
-  document.getElementById("modalTitle").textContent = "New Project";
-  document.getElementById("projectName").value = "";
-  document.getElementById("projectDescription").value = "";
-  document.getElementById("projectModal").style.display = "flex";
-};
-document.getElementById("closeProjectModal").onclick = function() {
-  document.getElementById("projectModal").style.display = "none";
-};
-
-document.getElementById("saveProjectBtn").onclick = function() {
-  let name = document.getElementById("projectName").value.trim();
-  let desc = document.getElementById("projectDescription").value.trim();
-  if (!name) return alert("Project name required");
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  if (editingProjectIndex !== null) {
-    projects[editingProjectIndex].name = name;
-    projects[editingProjectIndex].description = desc;
+// --- Tasks (Subtable per project) ---
+window.toggleTasksRow = function(pidx, btn) {
+  let tr = document.getElementById("task-row-"+pidx);
+  let cell = document.getElementById("task-cell-"+pidx);
+  if (tr.style.display === "none") {
+    renderTasksTable(pidx, cell);
+    tr.style.display = "";
+    btn.style.background = "#f5e675";
+    btn.style.color = "#c1770a";
   } else {
-    projects.push({ name, description: desc, tasks: [] });
+    tr.style.display = "none";
+    btn.style.background = "";
+    btn.style.color = "";
   }
-  localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-  document.getElementById("projectModal").style.display = "none";
-  renderProjects();
 };
 
-document.getElementById("closeTaskEditModal").onclick = function() {
-  document.getElementById("taskEditModal").style.display = "none";
-};
-document.getElementById("saveTaskEditBtn").onclick = function() {
-  let title = document.getElementById("editTaskName").value.trim();
-  let prio = document.getElementById("editTaskPriority").value;
-  let due = document.getElementById("editTaskDueDate").value;
-  if (!title) return;
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
-  let t = projects[editingTask.pidx].tasks[editingTask.tidx];
-  t.title = title; t.priority = prio; t.due = due;
-  localStorage.setItem(userKey("projects"), JSON.stringify(projects));
-  document.getElementById("taskEditModal").style.display = "none";
-  renderProjects();
+function renderTasksTable(pidx, container) {
+  let projects = getProjects();
+  let p = projects[pidx];
+  p.tasks = p.tasks || [];
+  // Bulk selection state
+  if (!p._sel) p._sel = [];
+  let tbl = `<div style="margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+    <button class="btn" onclick="addTask(${pidx})"><span class="material-icons" style="font-size:1.1em;">add_task</span> Add Task</button>
+    <span style="font-size:0.95em;">(${p.tasks.length} tasks)</span>
+  </div>`;
+  // Bulk bar
+  if (p._sel && p._sel.length > 0) {
+    tbl += `<div class="bulk-bar">
+      <b>${p._sel.length} selected</b>
+      <button class="btn secondary" onclick="bulkMarkDone(${pidx})"><span class="material-icons" style="font-size:1em;">done_all</span> Mark as Done</button>
+      <button class="btn secondary" onclick="bulkDelete(${pidx})"><span class="material-icons" style="font-size:1em;">delete</span> Delete</button>
+      <button class="btn secondary" onclick="clearBulk(${pidx})">Clear</button>
+    </div>`;
+  }
+  tbl += `<table class="task-table"><tr>
+    <th><input type="checkbox" onchange="toggleAllTasks(${pidx},this)" ${p.tasks.length&&p._sel&&p._sel.length===p.tasks.length?'checked':''}></th>
+    <th>Task</th><th>Done</th><th>Due</th><th>Priority</th><th>Notes</th><th>Actions</th>
+  </tr>`;
+  p.tasks.forEach((t, i) => {
+    let checked = (p._sel||[]).includes(i);
+    tbl += `<tr${checked?' class="selected"':''}>
+      <td><input type="checkbox" onclick="selectTask(${pidx},${i})" ${checked?'checked':''}></td>
+      <td class="editable" onclick="editTaskCell(${pidx},${i},'title',this)">${escapeHTML(t.title||"")}</td>
+      <td style="text-align:center;">
+        <input type="checkbox" onchange="toggleTaskDone(${pidx},${i})" ${t.done?"checked":""}>
+      </td>
+      <td class="editable" onclick="editTaskCell(${pidx},${i},'due',this)">${escapeHTML(t.due||"")}</td>
+      <td class="editable" onclick="editTaskCell(${pidx},${i},'priority',this)">${escapeHTML(t.priority||"")}</td>
+      <td>
+        <button class="comment-btn" title="Edit Notes" onclick="openCommentModal('task',${pidx},${i})">
+          <span class="material-icons">comment</span>
+        </button>
+      </td>
+      <td>
+        <button class="btn secondary" style="padding:2px 8px;" title="Delete Task" onclick="deleteTask(${pidx},${i})"><span class="material-icons" style="font-size:1em;">delete</span></button>
+      </td>
+    </tr>`;
+  });
+  tbl += `</table>`;
+  container.innerHTML = tbl;
+}
+
+// --- Task Editing ---
+window.editTaskCell = function(pidx, tidx, field, td) {
+  let projects = getProjects();
+  let t = projects[pidx].tasks[tidx];
+  let input;
+  if (field === "priority") {
+    input = document.createElement("select");
+    ["Low","Medium","High"].forEach(opt=>{
+      let o = document.createElement("option");
+      o.value = opt; o.textContent = opt;
+      if ((t.priority||"Low") === opt) o.selected = true;
+      input.appendChild(o);
+    });
+  } else if (field === "due") {
+    input = document.createElement("input");
+    input.type = "date";
+    input.value = t.due||"";
+  } else {
+    input = document.createElement("input");
+    input.type = "text";
+    input.value = t[field]||"";
+  }
+  input.onblur = function() {
+    t[field] = input.value;
+    saveProjects(projects);
+    renderProjectTable();
+    // re-expand this task table
+    setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+  };
+  input.onkeydown = function(e) {
+    if (e.key === "Enter") input.blur();
+  };
+  td.innerHTML = ""; td.appendChild(input); input.focus();
 };
 
-// ---- Auth ----
+window.addTask = function(pidx) {
+  let projects = getProjects();
+  projects[pidx].tasks = projects[pidx].tasks||[];
+  projects[pidx].tasks.push({title:"", done:false, due:"", priority:"Low", notes:""});
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.deleteTask = function(pidx, tidx) {
+  let projects = getProjects();
+  projects[pidx].tasks.splice(tidx,1);
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.toggleTaskDone = function(pidx, tidx) {
+  let projects = getProjects();
+  projects[pidx].tasks[tidx].done = !projects[pidx].tasks[tidx].done;
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+
+// --- Bulk Actions ---
+window.selectTask = function(pidx, tidx) {
+  let projects = getProjects();
+  let sel = projects[pidx]._sel || [];
+  if (sel.includes(tidx)) sel = sel.filter(x=>x!==tidx);
+  else sel.push(tidx);
+  projects[pidx]._sel = sel;
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.toggleAllTasks = function(pidx, box) {
+  let projects = getProjects();
+  let p = projects[pidx];
+  if (box.checked) {
+    p._sel = p.tasks.map((_,i)=>i);
+  } else {
+    p._sel = [];
+  }
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.bulkMarkDone = function(pidx) {
+  let projects = getProjects();
+  let sel = projects[pidx]._sel||[];
+  sel.forEach(i=>{projects[pidx].tasks[i].done=true;});
+  projects[pidx]._sel = [];
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.bulkDelete = function(pidx) {
+  if (!confirm("Delete selected tasks?")) return;
+  let projects = getProjects();
+  let sel = projects[pidx]._sel||[];
+  projects[pidx].tasks = projects[pidx].tasks.filter((_,i)=>!sel.includes(i));
+  projects[pidx]._sel = [];
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+window.clearBulk = function(pidx) {
+  let projects = getProjects();
+  projects[pidx]._sel = [];
+  saveProjects(projects);
+  renderProjectTable();
+  setTimeout(()=>{toggleTasksRow(pidx, document.querySelector(`#proj-row-${pidx} .btn[title='Tasks']`));},0);
+};
+
+// --- Comments Modal (Project & Task) ---
+window.openCommentModal = function(type, pidx, tidx) {
+  commentModalState = { type, pidx, tidx };
+  let projects = getProjects();
+  let val = "";
+  if (type==="project") val = projects[pidx].Comments||"";
+  if (type==="task") val = projects[pidx].tasks[tidx].notes||"";
+  document.getElementById("commentModalBG").style.display = "flex";
+  document.getElementById("commentModalTextarea").value = val;
+  document.getElementById("commentModalTitle").textContent = (type==="project"?"Project":"Task")+" Comments/Notes";
+};
+document.getElementById("closeCommentModal").onclick = ()=>{document.getElementById("commentModalBG").style.display="none";};
+document.getElementById("saveCommentBtn").onclick = function() {
+  let txt = document.getElementById("commentModalTextarea").value;
+  let projects = getProjects();
+  if (commentModalState.type==="project") projects[commentModalState.pidx].Comments = txt;
+  if (commentModalState.type==="task") projects[commentModalState.pidx].tasks[commentModalState.tidx].notes = txt;
+  saveProjects(projects);
+  document.getElementById("commentModalBG").style.display="none";
+  renderProjectTable();
+};
+
+// --- Auth (Local) ---
+function setAuthUI(loggedIn) {
+  document.getElementById("loginBtn").style.display = loggedIn ? "none" : "";
+  document.getElementById("logoutBtn").style.display = loggedIn ? "" : "none";
+  document.getElementById("addProjectBtn").disabled = !loggedIn;
+  document.getElementById("exportBtn").disabled = !loggedIn;
+  document.getElementById("importBtn").disabled = !loggedIn;
+  document.getElementById("searchInput").disabled = !loggedIn;
+}
 document.getElementById("loginBtn").onclick = function() {
   let user = prompt("Enter username:");
   if (!user) return;
   currentUser = user;
   localStorage.setItem("user", user);
-  renderProjects();
+  renderProjectTable();
 };
 document.getElementById("logoutBtn").onclick = function() {
   localStorage.removeItem("user");
   currentUser = null;
   setAuthUI(false);
-  document.getElementById("projects").innerHTML = "";
+  renderProjectTable();
 };
 
-// ---- Search, Sort ----
-document.getElementById("searchInput").oninput = renderProjects;
-document.getElementById("sortProjects").onchange = renderProjects;
+// --- Search ---
+document.getElementById("searchInput").oninput = renderProjectTable;
 
-// ---- Dark mode ----
+// --- Dark mode ---
 document.getElementById("themeBtn").onclick = function() {
   let isDark = document.body.getAttribute("data-theme") === "dark";
   document.body.setAttribute("data-theme", isDark ? "light" : "dark");
   localStorage.setItem("theme", isDark ? "light" : "dark");
 };
+if (localStorage.getItem("theme") === "dark") document.body.setAttribute("data-theme", "dark");
 
-// ---- Export (XLSX & CSV) ----
+// --- Import/Export ---
 document.getElementById("exportBtn").onclick = function() {
-  let projects = JSON.parse(localStorage.getItem(userKey("projects")) || "[]");
+  let projects = getProjects();
+  let allFields = getAllFields();
   // Flatten for export
   let flat = [];
-  projects.forEach(p => {
-    if ((p.tasks||[]).length) {
-      p.tasks.forEach(t => flat.push({
-        Project: p.name, Description: p.description, Task: t.title,
-        Priority: t.priority||"low", Done: t.done ? "Yes" : "No", Due: t.due||""
-      }));
-    } else {
-      flat.push({ Project: p.name, Description: p.description, Task: "", Priority: "", Done: "", Due: "" });
-    }
+  projects.forEach((p, i) => {
+    let prjRow = {};
+    allFields.forEach(f=>{prjRow[f]=typeof p[f]!=="undefined"?p[f]:"";});
+    prjRow.tasks = (p.tasks||[]).length;
+    flat.push(prjRow);
+    (p.tasks||[]).forEach((t, tidx) => {
+      let taskRow = {
+        Project: p.name, Task: t.title, Done: t.done ? "Yes" : "No",
+        Due: t.due||"", Priority: t.priority||"", Notes: t.notes||""
+      };
+      flat.push(taskRow);
+    });
   });
   // XLSX
   let ws = XLSX.utils.json_to_sheet(flat);
@@ -590,12 +788,9 @@ document.getElementById("exportBtn").onclick = function() {
   let a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "project_data.csv";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+  document.body.appendChild(a); a.click(); a.remove();
 };
 
-// ---- Import (XLSX & CSV) ----
 document.getElementById("importBtn").onclick = function() {
   document.getElementById("fileInput").click();
 };
@@ -604,22 +799,38 @@ document.getElementById("fileInput").onchange = function(e) {
   if (!file) return;
   let ext = file.name.split('.').pop().toLowerCase();
   let processRows = rows => {
-    let grouped = {};
-    rows.forEach(r => {
-      if (!r.Project) return;
-      if (!grouped[r.Project]) grouped[r.Project] = { name: r.Project, description: r.Description, tasks: [] };
-      if (r.Task) grouped[r.Project].tasks.push({
-        title: r.Task, priority: r.Priority||"low", done: r.Done === "Yes", due: r.Due||""
+    // Guess custom fields
+    let cFields = [];
+    rows.forEach(r=>{
+      Object.keys(r).forEach(f=>{
+        if (!DEFAULT_FIELDS.includes(f) && f !== "tasks" && f !== "Project" && f !== "Task" && f !== "Done" && f !== "Due" && f !== "Priority" && f !== "Notes" && !cFields.includes(f)) {
+          cFields.push(f);
+        }
       });
     });
-    localStorage.setItem(userKey("projects"), JSON.stringify(Object.values(grouped)));
-    renderProjects();
+    customFields = cFields;
+    localStorage.setItem("customFields", JSON.stringify(customFields));
+    // Group by projects
+    let grouped = {};
+    rows.forEach(r => {
+      let prjName = r.Project||r.name;
+      if (!prjName) return;
+      if (!grouped[prjName]) {
+        let obj = {};
+        getAllFields().forEach(f=>{obj[f]=r[f]||"";});
+        obj.name = prjName;
+        obj.tasks = [];
+        grouped[prjName] = obj;
+      }
+      if (r.Task) grouped[prjName].tasks.push({
+        title: r.Task, done: r.Done==="Yes", due: r.Due||"", priority: r.Priority||"", notes: r.Notes||""
+      });
+    });
+    saveProjects(Object.values(grouped));
+    renderProjectTable();
   };
   if (ext === "csv") {
-    Papa.parse(file, {
-      header: true,
-      complete: function(results) { processRows(results.data); }
-    });
+    Papa.parse(file, { header:true, complete: r=>processRows(r.data) });
   } else {
     let reader = new FileReader();
     reader.onload = function(ev) {
@@ -633,12 +844,14 @@ document.getElementById("fileInput").onchange = function(e) {
   }
 };
 
-// ---- Theme preference ----
-if (localStorage.getItem("theme") === "dark") document.body.setAttribute("data-theme", "dark");
+// --- Initial ---
+if (currentUser) setAuthUI(true); else setAuthUI(false);
+renderProjectTable();
 
-// ---- Initial ----
-if (currentUser) renderProjects();
-else setAuthUI(false);
+// --- Helpers ---
+function escapeHTML(str) {
+  return (""+str).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
 </script>
 </body>
 </html>
